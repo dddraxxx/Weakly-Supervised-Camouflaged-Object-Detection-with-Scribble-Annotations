@@ -10,7 +10,6 @@ Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)
 ## Experimental Results
 - We provide CRNet [testing maps](https://drive.google.com/file/d/1UmoNMWv0JnjK2oFZkSjicCeYQXO2tj6Y/view?usp=sharing) and [training weights]() presented in the papers.
 
-
 ## Code
 ### Requirements
 1. git clone --recurse-submodules https://github.com/siyueyu/SCWSSOD.git

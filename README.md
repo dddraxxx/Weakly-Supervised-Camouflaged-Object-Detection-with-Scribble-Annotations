@@ -1,6 +1,8 @@
-# Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations
+# Weakly-Supervised Camouflaged Object Detection with Scribble Annotations
 
 Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)
+
+
 
 ## Dataset
 - We relabeled 4,040 images (3,040 from COD10K, 1,000 from CAMO) with scribbles and proposed the **S-COD dataset** [(Download)](https://drive.google.com/file/d/1u7PRtZDu2vXCRe0o2SplVYa7ESoZQFR-/view?usp=sharing) for training. In our annotations, "1" stands for foregrounds, "2" for backgrounds, and "0" for unlabeled regions.

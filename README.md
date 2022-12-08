@@ -26,12 +26,12 @@ Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)
 The pretrained weight can be found here:
 [ResNet-50](https://drive.google.com/file/d/1Lt6o2YBYiFIhdKlN0WEInMroPoDZ8cgh/view?usp=sharing)
 
-### Training
+### Train
 - Download the dataset and pretrained model.
 - Modify the path in `train.py`.
 - Run `python train.py`.
 
-### Testing and Evaluation
+### Test and Evaluate
 - The evaluation is done using the submodule [PySODEvalToolKit](https://github.com/lartpang/PySODEvalToolkit.git). Add the json files according to its instruction. 
 - Modify the path and filename.
 - Run `python test.py`.

@@ -67,8 +67,6 @@ class CAM(nn.Module):
         right_2 = x_high
         left = F.relu(self.bn_1(self.conv_1(left_1 * right_1)), inplace=True)
         right = F.relu(self.bn_2(self.conv_2(left_2 * right_2)), inplace=True)
-        # left = F.relu(left_1 * right_1, inplace=True)
-        # right = F.relu(left_2 * right_2, inplace=True)
         right = F.interpolate(right, size=x_low.size()[2:], mode='bilinear', align_corners=True)
         out = self.mul(left, right)
         return out
@@ -103,7 +101,10 @@ class BRM(nn.Module):
     def initialize(self):
         weight_init(self)
  
+# Revised from: PraNet: Parallel Reverse Attention Network for Polyp Segmentation, MICCAI20
+# https://github.com/DengPingFan/PraNet
 class RFB_modified(nn.Module):
+    """ logical semantic relation (LSR) """
     def __init__(self, in_channel, out_channel):
         super(RFB_modified, self).__init__()
         self.relu = nn.ReLU(True)
@@ -242,6 +243,8 @@ class PyramidPooling(nn.Module):
         weight_init(self)
 
 ########################################### CoordAttention #########################################
+# Revised from: Coordinate Attention for Efficient Mobile Network Design, CVPR21
+# https://github.com/houqb/CoordAttention
 class h_sigmoid(nn.Module):
     def __init__(self, inplace=True):
         super(h_sigmoid, self).__init__()
@@ -307,6 +310,7 @@ class CoordAtt(nn.Module):
 
 ####################################### Contrast Texture ###########################################
 class Contrast_Block_Deep(nn.Module):
+    """ local-context contrasted (LCC) """
     def __init__(self, planes, d1=4, d2=8):
         super(Contrast_Block_Deep, self).__init__()
         self.inplanes = int(planes)
@@ -451,15 +455,7 @@ class Net(nn.Module):
             Contrast_Block_Deep(64),
             Contrast_Block_Deep(64)
         ])
-        
-        self.ca = nn.ModuleList([
-            CoordAtt(64, 64),
-            CoordAtt(64, 64),
-            CoordAtt(64, 64),
-            CoordAtt(64, 64),
-            CoordAtt(64, 64)
-        ])
-        
+            
 
         self.fusion = nn.ModuleList([
             FFM(64),
@@ -472,13 +468,6 @@ class Net(nn.Module):
             CAM(64),
             CAM(64)
         ])
-
-        self.edge_extract = nn.Sequential(nn.Conv2d(64, 64, 3, 1, 1), 
-                                          nn.BatchNorm2d(64),
-                                          nn.ReLU(), 
-                                          nn.Conv2d(64, 64, 1, 1, 0), 
-                                          nn.BatchNorm2d(64),
-                                          nn.ReLU())
 
         self.refine = BRM(64)
         #self.conv2 = basicConv(128, 64, k=1, s=1, p=0)
@@ -506,7 +495,6 @@ class Net(nn.Module):
         f_c3 = self.pyramid_pooling(bk_stage5)
         
         f_c2 = self.rfb[1](bk_stage5)
-        #f_c2 = self.ca[1](f5)#512
         fused3 = F.interpolate(f_c3, size=f_c2.size()[2:], mode='bilinear', align_corners=True)
         fused3 = self.fusion[2](f_c2, fused3)
 
@@ -515,10 +503,7 @@ class Net(nn.Module):
         fused2 = self.fusion[1](f_c1, fused2)
 
         f_t2 = self.conv1[2](bk_stage3)
-        #f_t2 = self.tem[1](f3)
         f_t2 = self.contrast[1](f_t2)
-        #f_t2 = self.ulsam[1](f_t2)
-        #f_t2 = self.ca[3](f_t2)
 
         a2 = F.interpolate(fused3, size=[f_t2.size(2)//2, f_t2.size(3)//2], mode='bilinear', align_corners=True)
         a2 = self.aggregation[1](a2, f_t2)

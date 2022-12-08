@@ -19,12 +19,14 @@ Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)
 
 ## Code
 ### Requirements
-- git clone --recurse-submodules https://github.com/dddraxxx/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations.git
-- pip install -r requirements.txt
+`
+git clone --recurse-submodules https://github.com/dddraxxx/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations.git
+pip install -r requirements.txt
+`
 
 ### Pretrained weights
 The pretrained weight can be found here:
-[ResNet-50](https://drive.google.com/file/d/1Lt6o2YBYiFIhdKlN0WEInMroPoDZ8cgh/view?usp=sharing)
+[ResNet-50](https://drive.google.com/file/d/1Lt6o2YBYiFIhdKlN0WEInMroPoDZ8cgh/view?usp=sharing).
 
 ### Train
 - Download the dataset and pretrained model.

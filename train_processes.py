@@ -1,11 +1,11 @@
 import torch.nn.functional as F
 import torch
-from lscloss import *
+from feature_loss import *
 from tools import *
 from utils import ramps
 
 criterion = torch.nn.CrossEntropyLoss(weight=None, ignore_index=255, reduction='mean').cuda()
-loss_lsc = LocalSaliencyCoherence().cuda()
+loss_lsc = FeatureLoss().cuda()
 loss_lsc_kernels_desc_defaults = [{"weight": 1, "xy": 6, "rgb": 0.1}]
 loss_lsc_radius = 5
 l = 0.3

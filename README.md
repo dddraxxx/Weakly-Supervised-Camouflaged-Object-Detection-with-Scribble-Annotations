@@ -24,8 +24,8 @@ The pretrained weight can be found here:
 
 ### Training
 - Download the dataset and pretrained model.
-- Modify the path in tarin.py
-- python train.py
+- Modify the path in 'tarin.py'.
+- Run 'python train.py'.
 
 ### Testing and Evaluation
 - The evaluation is done using the submodule [PySODEvalToolKit](https://github.com/lartpang/PySODEvalToolkit.git). Add the json files according to its instruction. 

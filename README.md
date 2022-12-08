@@ -15,20 +15,22 @@ Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)
 
 ## Code
 ### Requirements
-1. git clone --recurse-submodules https://github.com/dddraxxx/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations.git
-2. pip install -r requirements.txt
+- git clone --recurse-submodules https://github.com/dddraxxx/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations.git
+- pip install -r requirements.txt
 
 ### Pretrained weights
 The pretrained weight can be found here:
 [ResNet-50](https://drive.google.com/file/d/1Lt6o2YBYiFIhdKlN0WEInMroPoDZ8cgh/view?usp=sharing)
 
 ### Training
-1. Download the dataset and pretrained model.
-2. Modify the path in tarin.py
-3. python train.py
+- Download the dataset and pretrained model.
+- Modify the path in tarin.py
+- python train.py
 
-### Testing
-The evaluation is done using the submodule [PySODEvalToolKit](https://github.com/lartpang/PySODEvalToolkit.git). Add the json files according to its instruction. Then modify the path and filename, and run `python test.py`.
+### Testing and Evaluation
+- The evaluation is done using the submodule [PySODEvalToolKit](https://github.com/lartpang/PySODEvalToolkit.git). Add the json files according to its instruction. 
+- Modify the path and filename.
+- Run `python test.py`.
 
 ### Credit
 The code is based on [SCWSSOD](https://github.com/siyueyu/SCWSSOD.git), [GCPANet](https://github.com/JosephChenHub/GCPANet) and [GatedCRFLoss](https://github.com/LEONOB2014/GatedCRFLoss).

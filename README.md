@@ -14,7 +14,7 @@ Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)
 
 ## Code
 ### Requirements
-1. git clone --recurse-submodules https://github.com/siyueyu/SCWSSOD.git
+1. git clone --recurse-submodules https://github.com/dddraxxx/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations.git
 2. pip install -r requirements.txt
 
 ### Pretrained weights

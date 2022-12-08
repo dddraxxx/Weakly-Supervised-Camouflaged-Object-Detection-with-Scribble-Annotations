@@ -1,0 +1,3 @@
+[submodule "PySODEvalToolkit"]
+	path = PySODEvalToolkit
+	url = https://github.com/lartpang/PySODEvalToolkit.git

@@ -360,69 +360,6 @@ class Contrast_Block_Deep(nn.Module):
 
     def initialize(self):
         weight_init(self)
-    
-class RW_Module(nn.Module):
-    """ Position attention module"""
-    #Ref from SAGAN
-    def __init__(self, in_dim, shrink_factor):
-        super(RW_Module, self).__init__()
-        self.chanel_in = in_dim
-        self.shrink_factor = shrink_factor
-
-        self.query_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim//8, kernel_size=1)
-        self.key_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim//8, kernel_size=1)
-        self.value_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim, kernel_size=1)
-        self.gamma = torch.nn.Parameter(torch.zeros(1))
-
-        self.softmax = nn.Softmax(dim=-1)
-        
-    def own_softmax1(self, x):
-    
-        maxes1 = torch.max(x, 1, keepdim=True)[0]
-        maxes2 = torch.max(x, 2, keepdim=True)[0]
-        x_exp = torch.exp(x-0.5*maxes1-0.5*maxes2)
-        x_exp_sum_sqrt = torch.sqrt(torch.sum(x_exp, 2, keepdim=True))
-
-        return (x_exp/x_exp_sum_sqrt)/torch.transpose(x_exp_sum_sqrt, 1, 2)
-    
-    def forward(self, x):
-        """
-            inputs :
-                x : input feature maps( B X C X H X W)
-            returns :
-                out : attention value + input feature
-                attention: B X (HxW) X (HxW)
-        """
-        x_shrink = x
-        m_batchsize, C, height, width = x.size()
-        if self.shrink_factor != 1:
-            x_shrink = F.interpolate(x_shrink, scale_factor=self.shrink_factor, mode='bilinear', align_corners=True)
-            height = x_shrink.size(-2)
-            width = x_shrink.size(-1)
-            
-        
-        proj_query = self.query_conv(x_shrink).view(m_batchsize, -1, width*height).permute(0, 2, 1)
-        proj_key = self.key_conv(x_shrink).view(m_batchsize, -1, width*height)
-        
-        energy = torch.bmm(proj_query, proj_key)
-
-        attention = self.softmax(energy)
-
-        proj_value = self.value_conv(x_shrink).view(m_batchsize, -1, width*height)
-
-        out = torch.bmm(proj_value, attention.permute(0, 2, 1))
-        out = out.view(m_batchsize, C, height, width)
-        
-        # if self.shrink_factor != 1:
-        #     height = (height - 1) * self.shrink_factor + 1
-        #     width = (width - 1) * self.shrink_factor + 1
-        #     out = F.interpolate(out, size=(height, width), mode='bilinear', align_corners=True)
-
-        out = self.gamma*out + (1-self.gamma)*x_shrink
-        return out #,energy
-    
-    def initialize(self):
-        weight_init(self)
 
 ################################################ Net ###############################################
 class Net(nn.Module):
@@ -430,9 +367,6 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.cfg = cfg
         self.bkbone = ResNet()
-
-        # new added
-        self.rw = RW_Module(64, 2)
 
         self.pyramid_pooling = PyramidPooling(2048, 64)
 

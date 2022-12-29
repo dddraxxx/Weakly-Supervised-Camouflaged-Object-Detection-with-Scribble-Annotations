@@ -1,7 +1,7 @@
 Weakly-Supervised Camouflaged Object Detection with Scribble Annotations
 Ruozhen He, Qihua Dong, Jiaying Lin and Rynson W.H. Lau
 
-The annotations are licensed under a MIT License. The images have their own licenses. For non-commercial purposes only.
+The annotations are licensed under a BSD 3-clause License. The images have their own licenses. For non-commercial purposes only.
 Please cite our paper, if you use our code or benchmark dataset:
 
 @article{he2022weakly,

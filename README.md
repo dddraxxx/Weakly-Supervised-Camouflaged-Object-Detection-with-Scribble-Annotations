@@ -1,4 +1,4 @@
-# Weakly-Supervised Camouflaged Object Detection with Scribble Annotations (AAAI23 ORAL)
+# Weakly-Supervised Camouflaged Object Detection with Scribble Annotations (AAAI23, ORAL)
 > Authors: Ruozhen He*, Qihua Dong*, Jiaying Lin, and Rynson Lau (* joint first authors)
 
 Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)

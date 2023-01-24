@@ -93,10 +93,10 @@ class Data(Dataset):
                                                     transform.RandomCrop(320, 320),
                                                     transform.ToTensor())
         elif cfg.mode == 'test':
-            self.transform = transform.Compose(*([transform.Normalize(mean=cfg.mean, std=cfg.std),
+            self.transform = transform.Compose(transform.Normalize(mean=cfg.mean, std=cfg.std),
                                                     transform.Resize(320, 320),
                                                     transform.ToTensor()
-                                                ]+ [transform.RandomNoise(1e-1)]))
+                                                )
         else:
             raise ValueError
 

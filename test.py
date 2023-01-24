@@ -166,7 +166,7 @@ if __name__=='__main__':
     # set torch cuda device
     cfg = dataset.Config(datapath='000', mode='test')
     net = Net(cfg)
-    path = 'model-best'
+    path = 'model-best.pth'
     state_dict = torch.load(path)
     net.load_state_dict(state_dict, strict=True)
     print('complete loading: {}'.format(path))

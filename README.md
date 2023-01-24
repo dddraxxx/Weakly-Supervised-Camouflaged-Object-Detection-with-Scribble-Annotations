@@ -12,7 +12,7 @@ Paper Link: [arxiv](https://arxiv.org/abs/2207.14083)
 
 
 ## Experimental Results
-- We provide CRNet [testing maps](https://drive.google.com/file/d/1UmoNMWv0JnjK2oFZkSjicCeYQXO2tj6Y/view?usp=sharing) and [training weights](https://drive.google.com/file/d/1hAvbPN6dSwulq3BZefTZkm9FfX3S2EBG/view?usp=sharing) presented in the papers.
+- We provide CRNet [testing maps](https://drive.google.com/file/d/1UmoNMWv0JnjK2oFZkSjicCeYQXO2tj6Y/view?usp=sharing) and [training weights](https://drive.google.com/file/d/1YrtwLNAbXkk162YOwweS9-QwTzovG7xI/view?usp=sharing) presented in the papers.
 
 
 ![Evaluation](./Image/EvalTable.png)

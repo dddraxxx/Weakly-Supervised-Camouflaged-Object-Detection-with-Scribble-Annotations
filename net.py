@@ -5,7 +5,6 @@ import torch.nn.functional as F
 
 def weight_init(module):
     for n, m in module.named_children():
-        # print('initialize: '+n)
         if isinstance(m, nn.Conv2d) or isinstance(m, nn.Conv1d):
             nn.init.kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
             if m.bias is not None:

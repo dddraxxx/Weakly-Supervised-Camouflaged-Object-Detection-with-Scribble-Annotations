@@ -67,8 +67,6 @@ class CAM(nn.Module):
         right_2 = x_high
         left = F.relu(self.bn_1(self.conv_1(left_1 * right_1)), inplace=True)
         right = F.relu(self.bn_2(self.conv_2(left_2 * right_2)), inplace=True)
-        # left = F.relu(left_1 * right_1, inplace=True)
-        # right = F.relu(left_2 * right_2, inplace=True)
         right = F.interpolate(right, size=x_low.size()[2:], mode='bilinear', align_corners=True)
         out = self.mul(left, right)
         return out
@@ -103,7 +101,10 @@ class BRM(nn.Module):
     def initialize(self):
         weight_init(self)
  
+# Revised from: PraNet: Parallel Reverse Attention Network for Polyp Segmentation, MICCAI20
+# https://github.com/DengPingFan/PraNet
 class RFB_modified(nn.Module):
+    """ logical semantic relation (LSR) """
     def __init__(self, in_channel, out_channel):
         super(RFB_modified, self).__init__()
         self.relu = nn.ReLU(True)
@@ -242,6 +243,8 @@ class PyramidPooling(nn.Module):
         weight_init(self)
 
 ########################################### CoordAttention #########################################
+# Revised from: Coordinate Attention for Efficient Mobile Network Design, CVPR21
+# https://github.com/houqb/CoordAttention
 class h_sigmoid(nn.Module):
     def __init__(self, inplace=True):
         super(h_sigmoid, self).__init__()
@@ -307,6 +310,7 @@ class CoordAtt(nn.Module):
 
 ####################################### Contrast Texture ###########################################
 class Contrast_Block_Deep(nn.Module):
+    """ local-context contrasted (LCC) """
     def __init__(self, planes, d1=4, d2=8):
         super(Contrast_Block_Deep, self).__init__()
         self.inplanes = int(planes)
@@ -356,69 +360,6 @@ class Contrast_Block_Deep(nn.Module):
 
     def initialize(self):
         weight_init(self)
-    
-class RW_Module(nn.Module):
-    """ Position attention module"""
-    #Ref from SAGAN
-    def __init__(self, in_dim, shrink_factor):
-        super(RW_Module, self).__init__()
-        self.chanel_in = in_dim
-        self.shrink_factor = shrink_factor
-
-        self.query_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim//8, kernel_size=1)
-        self.key_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim//8, kernel_size=1)
-        self.value_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim, kernel_size=1)
-        self.gamma = torch.nn.Parameter(torch.zeros(1))
-
-        self.softmax = nn.Softmax(dim=-1)
-        
-    def own_softmax1(self, x):
-    
-        maxes1 = torch.max(x, 1, keepdim=True)[0]
-        maxes2 = torch.max(x, 2, keepdim=True)[0]
-        x_exp = torch.exp(x-0.5*maxes1-0.5*maxes2)
-        x_exp_sum_sqrt = torch.sqrt(torch.sum(x_exp, 2, keepdim=True))
-
-        return (x_exp/x_exp_sum_sqrt)/torch.transpose(x_exp_sum_sqrt, 1, 2)
-    
-    def forward(self, x):
-        """
-            inputs :
-                x : input feature maps( B X C X H X W)
-            returns :
-                out : attention value + input feature
-                attention: B X (HxW) X (HxW)
-        """
-        x_shrink = x
-        m_batchsize, C, height, width = x.size()
-        if self.shrink_factor != 1:
-            x_shrink = F.interpolate(x_shrink, scale_factor=self.shrink_factor, mode='bilinear', align_corners=True)
-            height = x_shrink.size(-2)
-            width = x_shrink.size(-1)
-            
-        
-        proj_query = self.query_conv(x_shrink).view(m_batchsize, -1, width*height).permute(0, 2, 1)
-        proj_key = self.key_conv(x_shrink).view(m_batchsize, -1, width*height)
-        
-        energy = torch.bmm(proj_query, proj_key)
-
-        attention = self.softmax(energy)
-
-        proj_value = self.value_conv(x_shrink).view(m_batchsize, -1, width*height)
-
-        out = torch.bmm(proj_value, attention.permute(0, 2, 1))
-        out = out.view(m_batchsize, C, height, width)
-        
-        # if self.shrink_factor != 1:
-        #     height = (height - 1) * self.shrink_factor + 1
-        #     width = (width - 1) * self.shrink_factor + 1
-        #     out = F.interpolate(out, size=(height, width), mode='bilinear', align_corners=True)
-
-        out = self.gamma*out + (1-self.gamma)*x_shrink
-        return out #,energy
-    
-    def initialize(self):
-        weight_init(self)
 
 ################################################ Net ###############################################
 class Net(nn.Module):
@@ -426,9 +367,6 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.cfg = cfg
         self.bkbone = ResNet()
-
-        # new added
-        self.rw = RW_Module(64, 2)
 
         self.pyramid_pooling = PyramidPooling(2048, 64)
 
@@ -451,15 +389,7 @@ class Net(nn.Module):
             Contrast_Block_Deep(64),
             Contrast_Block_Deep(64)
         ])
-        
-        self.ca = nn.ModuleList([
-            CoordAtt(64, 64),
-            CoordAtt(64, 64),
-            CoordAtt(64, 64),
-            CoordAtt(64, 64),
-            CoordAtt(64, 64)
-        ])
-        
+            
 
         self.fusion = nn.ModuleList([
             FFM(64),
@@ -472,13 +402,6 @@ class Net(nn.Module):
             CAM(64),
             CAM(64)
         ])
-
-        self.edge_extract = nn.Sequential(nn.Conv2d(64, 64, 3, 1, 1), 
-                                          nn.BatchNorm2d(64),
-                                          nn.ReLU(), 
-                                          nn.Conv2d(64, 64, 1, 1, 0), 
-                                          nn.BatchNorm2d(64),
-                                          nn.ReLU())
 
         self.refine = BRM(64)
         #self.conv2 = basicConv(128, 64, k=1, s=1, p=0)
@@ -506,7 +429,6 @@ class Net(nn.Module):
         f_c3 = self.pyramid_pooling(bk_stage5)
         
         f_c2 = self.rfb[1](bk_stage5)
-        #f_c2 = self.ca[1](f5)#512
         fused3 = F.interpolate(f_c3, size=f_c2.size()[2:], mode='bilinear', align_corners=True)
         fused3 = self.fusion[2](f_c2, fused3)
 
@@ -515,10 +437,7 @@ class Net(nn.Module):
         fused2 = self.fusion[1](f_c1, fused2)
 
         f_t2 = self.conv1[2](bk_stage3)
-        #f_t2 = self.tem[1](f3)
         f_t2 = self.contrast[1](f_t2)
-        #f_t2 = self.ulsam[1](f_t2)
-        #f_t2 = self.ca[3](f_t2)
 
         a2 = F.interpolate(fused3, size=[f_t2.size(2)//2, f_t2.size(3)//2], mode='bilinear', align_corners=True)
         a2 = self.aggregation[1](a2, f_t2)

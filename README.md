@@ -29,7 +29,7 @@ The pretrained weight can be found here:
 [ResNet-50](https://drive.google.com/file/d/1Lt6o2YBYiFIhdKlN0WEInMroPoDZ8cgh/view?usp=sharing).
 
 ### Train
-- Download the dataset and pretrained model.
+- Download the dataset and pretrained model. (examples of `train.txt` and `test.txt` are in the path `./CodDataset`)
 - Modify the path in `train.py`.
 - Run `python train.py`.
 

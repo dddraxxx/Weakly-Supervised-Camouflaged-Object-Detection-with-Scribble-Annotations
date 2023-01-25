@@ -151,7 +151,7 @@ def train(Dataset, Network, cfg, train_loss, start_from = 0):
                 print(msg)
                 logger.info(msg)
         
-        if epoch > cfg.epoch//2 or (epoch+1)%10==0:
+        if (epoch+1)%10==0:
             mae = validate_multiloader(net, val_loaders)
             print('VAL MAE:%s' % (mae))
             sw.add_scalar('val', mae, global_step=global_step)
@@ -174,12 +174,3 @@ if __name__=='__main__':
     from net import Net
     tm = partial(train_loss, w_ft=w_ft, ft_st = ft_st, ft_fct=.5, ft_dct = dict(crtl_loss = False, w_ftp=w_ftp, norm=False, topk=topk, step_ratio=2), ft_head=False, mtrsf_prob=1, ops=[0,1,2], w_l2g=0.3, l_me=0.05, me_st=20, multi_sc=0)
     train(dataset, Net, cfg, tm, start_from=0)
-    EXP_NAME_ = f'new_best_config'
-    for i in range(2):
-        EXP_NAME = f'bbrand_{EXP_NAME_}_{i}'
-        cfg = dataset.Config(datapath=f'{root}', savepath=f'./out/{EXP_NAME}/', mode='train', batch=16, lr=1e-3, momen=0.9, decay=5e-4, epoch=total_epoch, label_dir = 'Scribble')#, snapshot='/mnt/sdh/hrz/Cod/out/w46.8.5/model-{}'.format(ft_st))
-        from net import Net
-        tm = partial(train_loss, w_ft=w_ft, ft_st = ft_st, ft_fct=.5, ft_dct = dict(crtl_loss = False, w_ftp=w_ftp, norm=False, topk=topk, step_ratio=2), ft_head=False, mtrsf_prob=1, ops=[0,1,2], w_l2g=0.3, l_me=0.05, me_st=20, multi_sc=0)
-        train(dataset, Net, cfg, tm)#, start_from=60)
-
-

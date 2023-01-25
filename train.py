@@ -17,8 +17,7 @@ import numpy as np
 from train_processes import *
 from tools import *
 
-TAG = "scwscod"
-SAVE_PATH = "scwscod"
+TAG = "scribblecod"
 logger.basicConfig(level=logger.INFO, format='%(levelname)s %(asctime)s %(filename)s: %(lineno)d] %(message)s', datefmt='%Y-%m-%d %H:%M:%S', \
                            filename="train_%s.log"%(TAG), filemode="w")
 
@@ -92,7 +91,7 @@ def train(Dataset, Network, cfg, train_loss, start_from = 0):
     loader = DataLoader(data, batch_size=cfg.batch, shuffle=True, num_workers=8)
     val_cfg = [Dataset.Config(datapath=f'{root}/test/{i}' , mode='test') for i in ['CHAMELEON', 'CAMO', 'COD10K']]
     val_data = [Dataset.Data(v) for v in val_cfg]
-    val_loader = [DataLoader(v, batch_size=1, shuffle=False, num_workers=4) for v in val_data] 
+    val_loaders = [DataLoader(v, batch_size=1, shuffle=False, num_workers=4) for v in val_data] 
     min_mae = 1.0
     best_epoch = 0
     ## network
@@ -148,19 +147,20 @@ def train(Dataset, Network, cfg, train_loss, start_from = 0):
             ta = time.time() - st
             et = 0.9*et + 0.1*ta if et>0 else ta
             if batch_idx % 10 == 0:
-                msg = '%s| %s | eta:%s | step:%d/%d/%d | lr=%.6f | loss=%.6f | loss2=%.6f | loss3=%.6f | loss4=%.6f | loss5=%.6f' % (SAVE_PATH, datetime.datetime.now(), datetime.timedelta(seconds = int((cfg.epoch*db_size-niter)*et)), global_step, epoch+1, cfg.epoch, optimizer.param_groups[0]['lr'], loss.item(), loss2.item(), loss3.item(), loss4.item(), loss5.item())
+                msg = '%s| %s | eta:%s | step:%d/%d/%d | lr=%.6f | loss=%.6f | loss2=%.6f | loss3=%.6f | loss4=%.6f | loss5=%.6f' % (TAG, datetime.datetime.now(), datetime.timedelta(seconds = int((cfg.epoch*db_size-niter)*et)), global_step, epoch+1, cfg.epoch, optimizer.param_groups[0]['lr'], loss.item(), loss2.item(), loss3.item(), loss4.item(), loss5.item())
                 print(msg)
                 logger.info(msg)
         
         if epoch > cfg.epoch//2 or (epoch+1)%10==0:
-            mae = validate_multiloader(net, val_loader)
+            mae = validate_multiloader(net, val_loaders)
             print('VAL MAE:%s' % (mae))
             sw.add_scalar('val', mae, global_step=global_step)
-            if mae < min_mae and epoch > cfg.epoch//2:
+            if mae < min_mae :
                 min_mae = mae
                 best_epoch = epoch + 1
-                torch.save(net.state_dict(), cfg.savepath + '/model-best')
-            print('best epoch is:%d, MAE:%s' % (best_epoch, min_mae))
+                if epoch > cfg.epoch//2:
+                    torch.save(net.state_dict(), cfg.savepath + '/model-best.pth')
+                print('best epoch is:%d, MAE:%s' % (best_epoch, min_mae))
             
         if epoch == cfg.epoch-2 or epoch == cfg.epoch-1 or (epoch+1) % 30 == 0:
             torch.save(net.state_dict(), cfg.savepath + '/model-' + str(epoch + 1))
@@ -169,8 +169,17 @@ def train(Dataset, Network, cfg, train_loss, start_from = 0):
 if __name__=='__main__':
     cfg = [.15, 60, 16, 1]
     w_ft, ft_st, topk,w_ftp = cfg
-    EXP_NAME = f'best'
+    EXP_NAME = f'trained'
     cfg = dataset.Config(datapath=f'{root}', savepath=f'./out/{EXP_NAME}/', mode='train', batch=16, lr=1e-3, momen=0.9, decay=5e-4, epoch=total_epoch, label_dir = 'Scribble')
     from net import Net
     tm = partial(train_loss, w_ft=w_ft, ft_st = ft_st, ft_fct=.5, ft_dct = dict(crtl_loss = False, w_ftp=w_ftp, norm=False, topk=topk, step_ratio=2), ft_head=False, mtrsf_prob=1, ops=[0,1,2], w_l2g=0.3, l_me=0.05, me_st=20, multi_sc=0)
     train(dataset, Net, cfg, tm, start_from=0)
+    EXP_NAME_ = f'new_best_config'
+    for i in range(2):
+        EXP_NAME = f'bbrand_{EXP_NAME_}_{i}'
+        cfg = dataset.Config(datapath=f'{root}', savepath=f'./out/{EXP_NAME}/', mode='train', batch=16, lr=1e-3, momen=0.9, decay=5e-4, epoch=total_epoch, label_dir = 'Scribble')#, snapshot='/mnt/sdh/hrz/Cod/out/w46.8.5/model-{}'.format(ft_st))
+        from net import Net
+        tm = partial(train_loss, w_ft=w_ft, ft_st = ft_st, ft_fct=.5, ft_dct = dict(crtl_loss = False, w_ftp=w_ftp, norm=False, topk=topk, step_ratio=2), ft_head=False, mtrsf_prob=1, ops=[0,1,2], w_l2g=0.3, l_me=0.05, me_st=20, multi_sc=0)
+        train(dataset, Net, cfg, tm)#, start_from=60)
+
+

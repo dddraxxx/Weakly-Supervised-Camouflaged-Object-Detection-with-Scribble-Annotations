@@ -34,7 +34,7 @@ The pretrained weight can be found here:
 - Run `python train.py`.
 
 ### Test and Evaluate
-- The evaluation is done using the submodule [PySODEvalToolKit](https://github.com/lartpang/PySODEvalToolkit.git). Add the json files according to its instruction. 
+- The evaluation is done using the submodule [PySODEvalToolKit](https://github.com/lartpang/PySODEvalToolkit.git). Add the json files according to its instruction. (examples of json files are in the path `./CodDataset`)
 - Modify the path and filename.
 - Run `python test.py`.
 

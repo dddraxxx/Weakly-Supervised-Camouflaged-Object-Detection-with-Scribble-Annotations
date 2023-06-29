@@ -1,0 +1,16 @@
+{
+    "Ours": {
+        "CAMO": {
+            "path": "/mnt/sdh/hrz/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations/map/trained/CAMO",
+            "suffix": ".png"
+        },
+        "CHAMELEON": {
+            "path": "/mnt/sdh/hrz/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations/map/trained/CHAMELEON",
+            "suffix": ".png"
+        },
+        "COD10K": {
+            "path": "/mnt/sdh/hrz/Weakly-Supervised-Camouflaged-Object-Detection-with-Scribble-Annotations/map/trained/COD10K",
+            "suffix": ".png"
+        }
+    }
+}

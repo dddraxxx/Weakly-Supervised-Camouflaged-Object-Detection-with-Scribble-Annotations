@@ -1,0 +1,35 @@
+{
+  "COD10K": {
+    "root": "/mnt/sdh/hrz/CodDataset/test/COD10K",
+    "image": {
+      "path": "/mnt/sdh/hrz/CodDataset/test/COD10K/Image",
+      "suffix": ".jpg"
+    },
+    "mask": {
+      "path": "/mnt/sdh/hrz/CodDataset/test/COD10K/GT",
+      "suffix": ".png"
+    }
+  },
+    "CHAMELEON": {
+      "root": "/mnt/sdh/hrz/CodDataset/test/CHAMELEON",
+      "image": {
+        "path": "/mnt/sdh/hrz/CodDataset/test/CHAMELEON/Image",
+        "suffix": ".jpg"
+      },
+      "mask": {
+        "path": "/mnt/sdh/hrz/CodDataset/test/CHAMELEON/GT",
+        "suffix": ".png"
+      }
+    },
+    "CAMO": {
+      "root": "/mnt/sdh/hrz/CodDataset/test/CAMO",
+      "image": {
+        "path": "/mnt/sdh/hrz/CodDataset/test/CAMO/Image",
+        "suffix": ".jpg"
+      },
+      "mask": {
+        "path": "/mnt/sdh/hrz/CodDataset/test/CAMO/GT",
+        "suffix": ".png"
+      }
+    }
+}
